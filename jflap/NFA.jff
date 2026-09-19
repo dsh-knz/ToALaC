@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<structure>
+  <type>fa</type>
+
+  <automaton>
+    <!-- r0: начальное и допускающее состояние, чтение блока b -->
+    <state id="0" name="r0">
+      <x>190.0</x>
+      <y>210.0</y>
+      <initial/>
+      <final/>
+    </state>
+
+    <!-- r1: допускающее состояние, чтение блока a -->
+    <state id="1" name="r1">
+      <x>500.0</x>
+      <y>210.0</y>
+      <final/>
+    </state>
+
+    <!-- В состоянии r0 можно читать символы b -->
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>b</read>
+    </transition>
+
+    <!-- Пустой переход из r0 в r1 -->
+    <transition>
+      <from>0</from>
+      <to>1</to>
+      <read/>
+    </transition>
+
+    <!-- В состоянии r1 можно читать символы a -->
+    <transition>
+      <from>1</from>
+      <to>1</to>
+      <read>a</read>
+    </transition>
+  </automaton>
+</structure>
