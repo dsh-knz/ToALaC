@@ -2,17 +2,32 @@
 import java.io.IOException;
 
 public class NFA {
-    private static final int STATES = 2;
+    private static final int R0 = 0;
+    private static final int R1 = 1;
 
-    // table[откуда][символ: a=0, b=1][куда] = есть ли переход
-    private static final boolean[][][] table = new boolean[STATES][2][STATES];
-    private static final boolean[][] epsilon = new boolean[STATES][STATES];
-    private static final boolean[] accepting = {true, true};
+    // Q - множество состояний {r0, r1}
+    private static final int[] Q = {R0, R1};
+
+    // SIGMA - входной алфавит; ε в алфавит не входит
+    private static final char[] SIGMA = {'a', 'b'};
+
+    // Дополнительный столбец таблицы для ε-переходов
+    private static final int EPSILON = SIGMA.length;
+
+    // DELTA[откуда][a, b или ε][куда] = существует ли переход
+    private static final boolean[][][] DELTA =
+            new boolean[Q.length][SIGMA.length + 1][Q.length];
+
+    // Q0 - начальное состояние r0
+    private static final int Q0 = R0;
+
+    // F - множество допускающих состояний {r0, r1}
+    private static final boolean[] F = {true, true};
 
     private static void buildTable() {
-        table[0][1][0] = true; // b: остаёмся в r0
-        table[1][0][1] = true; // a: остаёмся в r1
-        epsilon[0][1] = true; // ε: начинаем блок из a без чтения символа
+        DELTA[R0][1][R0] = true;       // b: остаёмся в r0
+        DELTA[R1][0][R1] = true;       // a: остаёмся в r1
+        DELTA[R0][EPSILON][R1] = true; // ε: начинаем блок a без чтения символа
     }
 
     /** Добавляем к множеству все состояния, достижимые без чтения символа */
@@ -20,9 +35,9 @@ public class NFA {
         boolean changed;
         do {
             changed = false;
-            for (int from = 0; from < STATES; from++) {
-                for (int to = 0; to < STATES; to++) {
-                    if (states[from] && epsilon[from][to] && !states[to]) {
+            for (int from = 0; from < Q.length; from++) {
+                for (int to = 0; to < Q.length; to++) {
+                    if (states[from] && DELTA[from][EPSILON][to] && !states[to]) {
                         states[to] = true;
                         changed = true;
                     }
@@ -33,10 +48,10 @@ public class NFA {
 
     /** Выполняем все возможные переходы по одному символу */
     private static boolean[] step(boolean[] current, int symbol) {
-        boolean[] next = new boolean[STATES];
-        for (int from = 0; from < STATES; from++) {
-            for (int to = 0; to < STATES; to++) {
-                if (current[from] && table[from][symbol][to]) {
+        boolean[] next = new boolean[Q.length];
+        for (int from = 0; from < Q.length; from++) {
+            for (int to = 0; to < Q.length; to++) {
+                if (current[from] && DELTA[from][symbol][to]) {
                     next[to] = true;
                 }
             }
@@ -48,7 +63,7 @@ public class NFA {
     private static void printStates(boolean[] states) {
         System.out.print("{");
         boolean first = true;
-        for (int state = 0; state < STATES; state++) {
+        for (int state = 0; state < Q.length; state++) {
             if (states[state]) {
                 if (!first) System.out.print(", ");
                 System.out.print("r" + state);
@@ -61,24 +76,33 @@ public class NFA {
     /** Печатаем таблицу, которой пользуется метод step */
     private static void printTable() {
         System.out.println("Таблица переходов:\nсостояние | a | b | ε");
-        for (int from = 0; from < STATES; from++) {
+        for (int from = 0; from < Q.length; from++) {
             System.out.print("r" + from + " | ");
-            for (int symbol = 0; symbol < 2; symbol++) {
-                boolean[] targets = new boolean[STATES];
-                for (int to = 0; to < STATES; to++) {
-                    targets[to] = table[from][symbol][to];
+            for (int symbol = 0; symbol < SIGMA.length; symbol++) {
+                boolean[] targets = new boolean[Q.length];
+                for (int to = 0; to < Q.length; to++) {
+                    targets[to] = DELTA[from][symbol][to];
                 }
                 printStates(targets);
                 System.out.print(" | ");
             }
-            printStates(epsilon[from]);
+            printStates(DELTA[from][EPSILON]);
             System.out.println();
         }
     }
 
+    /** Возвращает номер столбца таблицы для входного символа */
+    private static int symbolIndex(int ch) {
+        for (int i = 0; i < SIGMA.length; i++) {
+            if (SIGMA[i] == ch) return i;
+        }
+        return -1;
+    }
+
     public static void main(String[] args) throws IOException {
         buildTable();
-        boolean[] current = {true, false}; // начальное состояние r0
+        boolean[] current = new boolean[Q.length];
+        current[Q0] = true; // начальное состояние r0
         closure(current); // учитываем ε-переход ещё до первого символа
 
         System.out.println("НКА: введите цепочку из a и b, затем Enter.");
@@ -87,30 +111,30 @@ public class NFA {
         System.out.println();
 
         int ch;
-        boolean valid = true;
         while ((ch = System.in.read()) != -1) {
             if (ch == '\n' || ch == '\r') break;
-            if (ch != 'a' && ch != 'b') {
-                valid = false;
-                break;
-            }
+
             System.out.print("По " + (char) ch + ": ");
             printStates(current);
-            current = step(current, ch == 'a' ? 0 : 1);
+
+            int symbol = symbolIndex(ch);
+            if (symbol == -1) {
+                // Для символа вне алфавита в таблице нет переходов
+                current = new boolean[Q.length];
+            } else {
+                current = step(current, symbol);
+            }
+
             System.out.print(" -> ");
             printStates(current);
             System.out.println();
         }
 
         boolean result = false;
-        for (int state = 0; state < STATES; state++) {
-            if (current[state] && accepting[state]) result = true;
+        for (int state = 0; state < Q.length; state++) {
+            if (current[state] && F[state]) result = true;
         }
-        if (!valid) {
-            System.out.println("Ошибка: допустимы только a и b.");
-        } else {
-            System.out.println(result ? "Accept" : "Reject");
-        }
+        System.out.println(result ? "Accept" : "Reject");
         printTable();
     }
 }
