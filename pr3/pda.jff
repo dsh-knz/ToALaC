@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<structure>
+  <type>pda</type>
+  <automaton>
+    <state id="0" name="q0">
+      <x>90.0</x>
+      <y>230.0</y>
+      <initial />
+    </state>
+    <state id="1" name="q1">
+      <x>440.0</x>
+      <y>230.0</y>
+      <final />
+    </state>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>a</read>
+      <pop>Z</pop>
+      <push>AZ</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>a</read>
+      <pop>A</pop>
+      <push>AA</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>a</read>
+      <pop>C</pop>
+      <push />
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>b</read>
+      <pop>Z</pop>
+      <push>AZ</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>b</read>
+      <pop>A</pop>
+      <push>AA</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>b</read>
+      <pop>C</pop>
+      <push />
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>c</read>
+      <pop>Z</pop>
+      <push>CZ</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>c</read>
+      <pop>A</pop>
+      <push />
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>0</to>
+      <read>c</read>
+      <pop>C</pop>
+      <push>CC</push>
+    </transition>
+    <transition>
+      <from>0</from>
+      <to>1</to>
+      <read />
+      <pop>Z</pop>
+      <push>Z</push>
+    </transition>
+  </automaton>
+</structure>

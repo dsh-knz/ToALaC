@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<structure>
+  <type>grammar</type>
+  <production>
+    <left>S</left>
+    <right>EC</right>
+  </production>
+  <production>
+    <left>S</left>
+    <right>AD</right>
+  </production>
+  <production>
+    <left>E</left>
+    <right>aEb</right>
+  </production>
+  <production>
+    <left>E</left>
+    <right />
+  </production>
+  <production>
+    <left>C</left>
+    <right>cC</right>
+  </production>
+  <production>
+    <left>C</left>
+    <right />
+  </production>
+  <production>
+    <left>A</left>
+    <right>aA</right>
+  </production>
+  <production>
+    <left>A</left>
+    <right />
+  </production>
+  <production>
+    <left>D</left>
+    <right>bDc</right>
+  </production>
+  <production>
+    <left>D</left>
+    <right>B</right>
+  </production>
+  <production>
+    <left>D</left>
+    <right>K</right>
+  </production>
+  <production>
+    <left>B</left>
+    <right>bB</right>
+  </production>
+  <production>
+    <left>B</left>
+    <right>b</right>
+  </production>
+  <production>
+    <left>K</left>
+    <right>cK</right>
+  </production>
+  <production>
+    <left>K</left>
+    <right>c</right>
+  </production>
+</structure>
